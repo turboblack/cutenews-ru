@@ -1,0 +1,70 @@
+<?php
+// ********************************************************************************
+// Plugins
+// ********************************************************************************
+echoheader('options', $echo['header']);
+
+$available_plugins = available_plugins();
+
+function SortByName($a, $b){
+return ($a['name'] > $b['name'] ? 1 : -1);
+}
+
+uasort($available_plugins, 'SortByName');
+
+if ($_GET['enable']){
+	$id = stripslashes($_GET['enable']) - 1;
+	$filename = $available_plugins[$id]['file'];
+	cache_remover();
+	enable_plugin($filename);
+?>
+
+<p><?php echo $echo['enabled']; ?>: <b><?php echo $available_plugins[$id]['name']; ?></b></p>
+
+<?php
+}
+
+if ($_GET['disable']){
+	$id = stripslashes($_GET['disable']) - 1;
+	$filename = $available_plugins[$id]['file'];
+	cache_remover();
+	disable_plugin($filename);
+?>
+
+<p><?php echo $echo['disabled']; ?>: <b><?php echo $available_plugins[$id]['name']; ?></b></p>
+
+<?php
+}
+?>
+
+<table id="plugins">
+ <thead>
+  <th><?php echo $echo['name']; ?>
+  <th><?php echo $echo['version']; ?>
+  <th><?php echo $echo['description']; ?>
+  <th><?php echo $echo['author']; ?>
+  <th><?php echo $echo['action']; ?>
+
+<?php
+foreach ($available_plugins as $id => $plugin){
+	$id		 = $id + 1;
+	$enabled = plugin_enabled($plugin['file']);
+	$class	 = ($plugin['compatible'] ? ($enabled ? 'enabled' : 'disabled') : 'incompatible');
+?>
+
+ <tr class="<?php echo $class; ?>"<?php echo ($plugin['compatible'] ? '' : ' title="Framework: '.$plugin['framework'].'"'); ?>'>
+  <td><?php echo ($plugin['uri'] ?	'<a href="'.$plugin['uri'].'">'.$plugin['name'].'</a>': $plugin['name']); ?>
+  <td><?php echo $plugin['version']; ?>
+  <td><?php echo run_filters('plugin-description', $plugin['description']); ?>
+  <td><?php echo ($plugin['author_uri'] ?  '<a href="'.$plugin['author_uri'].'">'.$plugin['author'].'</a>': $plugin['author']); ?>
+  <td><?php echo ($plugin['compatible'] ? ($enabled ? '<a href="?mod=plugins&amp;disable='.$id.'">'.$echo['turnOff'].'</a>' : '<a href="?mod=plugins&amp;enable='.$id.'">'.$echo['turnOn'].'</a>') : $echo['error']); ?>
+
+<?php
+	}
+?>
+
+</table>
+
+<?php
+echofooter();
+?>

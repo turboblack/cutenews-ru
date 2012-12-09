@@ -1,0 +1,12 @@
+<center><b>CuteNews Debug Information:</b>
+<hr />
+<br />
+Script Version/ID:&nbsp&nbsp;<?php echo $config_version_name; ?> / <?php echo $config_version_id; ?>
+<br />
+$config_http_script_dir:&nbsp;&nbsp;<?php echo $config_http_script_dir; ?>
+<br /><br />
+<hr />
+<?php echo phpinfo(); ?>
+<hr />
+<textarea cols="85" rows="24"><?php echo print_r(ini_get_all()); ?></textarea>
+<?php exit(); ?>
